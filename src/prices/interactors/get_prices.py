@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 
 from common.interfaces.interactors import Interactor
-from common.interfaces.repositories import IFetchPricesRepository
+from common.interfaces.repositories import IGetPricesRepository
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
 
@@ -26,7 +26,7 @@ class GetPricesResponseModel:
 class GetPricesInteractor(Interactor[GetPricesRequestModel, GetPricesResponseModel]):
     """Interactor for getting prices from the repositories."""
 
-    def __init__(self, price_repository: IFetchPricesRepository) -> None:
+    def __init__(self, price_repository: IGetPricesRepository) -> None:
         """Initialize the interactor."""
         self._price_repository = price_repository
 

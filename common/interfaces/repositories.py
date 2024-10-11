@@ -7,8 +7,8 @@ from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
 
 
-class IFetchPricesRepository(ABC):
-    """Interface for storing and retrieving prices from different exchanges."""
+class IGetPricesRepository(ABC):
+    """Interface for retrieving prices from the cache."""
 
     @abstractmethod
     def get_all_prices(
