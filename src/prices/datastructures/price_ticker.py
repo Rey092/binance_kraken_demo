@@ -26,10 +26,8 @@ class PriceTicker:
         return (self.buy_price + self.sell_price) / 2
 
     def __post_init__(self):
-        """Normalize the pair name. Adjust prices to 7 decimal places."""
+        """Normalize the pair name."""
         self.pair = self.pair.replace("/", "").replace(":", "").upper()
-        self.buy_price = round(self.buy_price, 7)
-        self.sell_price = round(self.sell_price, 7)
 
     @classmethod
     def aggregate(cls, tickers: list["PriceTicker"]) -> "PriceTicker":
