@@ -1,0 +1,8 @@
+version: '3'
+
+
+tasks:
+  run:
+    desc: "Run Django app in development mode"
+    cmds:
+      - python manage.py runserver --noreload
