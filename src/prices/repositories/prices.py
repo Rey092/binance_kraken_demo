@@ -22,7 +22,7 @@ class PriceRepository(
     def __init__(self):
         """Initialize the price service."""
         self._key_for_keys = "keys:{exchange}"
-        self._key_for_ticker = "ticker:{exchange}_{pair}"
+        self._key_for_ticker = "ticker:{exchange}:{pair}"
 
     def store_price(self, ticker: PriceTicker):
         """Store the price in the cache."""
