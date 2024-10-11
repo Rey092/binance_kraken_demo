@@ -3,19 +3,22 @@
 import logging
 import threading
 import time
+from abc import ABC
+from typing import TYPE_CHECKING
 
-from websockets.sync.client import ClientConnection
 from websockets.sync.client import connect
 
 from common.interfaces.repositories import PriceRepositoryInterface
 from common.interfaces.workers import PriceWorkerInterface
-from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
+
+if TYPE_CHECKING:
+    from src.prices.datastructures.price_ticker import PriceTicker
 
 logger = logging.getLogger(__name__)
 
 
-class WebSocketPriceWorker(threading.Thread, PriceWorkerInterface):
+class WebSocketPriceWorkerBase(threading.Thread, PriceWorkerInterface, ABC):
     """Base class for WebSocket price workers."""
 
     exchange: PriceExchange
@@ -44,14 +47,6 @@ class WebSocketPriceWorker(threading.Thread, PriceWorkerInterface):
                 for ticker in tickers:
                     logger.info(self._message_price_received.format(ticker=ticker))
                     self._repository.store_price(ticker=ticker)
-
-    def parse_message(self, message: str) -> list[PriceTicker]:
-        """Parse the message from the exchange. Return a list of PriceTicker objects."""
-        raise NotImplementedError
-
-    def subscribe(self, websocket: ClientConnection) -> None:
-        """Subscribe to the WebSocket feed."""
-        raise NotImplementedError
 
     def run(self) -> None:
         """Run the worker in a thread."""

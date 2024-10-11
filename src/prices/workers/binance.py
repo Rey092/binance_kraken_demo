@@ -6,10 +6,10 @@ from websockets.sync.client import ClientConnection
 
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
-from src.prices.workers import WebSocketPriceWorker
+from src.prices.workers import WebSocketPriceWorkerBase
 
 
-class BinanceWebSocketPriceWorker(WebSocketPriceWorker):
+class BinanceWebSocketPriceWorker(WebSocketPriceWorkerBase):
     """Binance WebSocket price worker."""
 
     exchange: PriceExchange = PriceExchange.binance

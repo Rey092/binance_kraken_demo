@@ -8,10 +8,10 @@ import websockets
 
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
-from src.prices.workers import WebSocketPriceWorker
+from src.prices.workers import WebSocketPriceWorkerBase
 
 
-class KrakenWorker(WebSocketPriceWorker):
+class KrakenWorker(WebSocketPriceWorkerBase):
     """Kraken WebSocket price worker."""
 
     exchange: PriceExchange = PriceExchange.kraken
