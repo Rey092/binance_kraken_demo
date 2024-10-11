@@ -1,32 +1,30 @@
 """Base Price Worker."""
 
-import asyncio
 import logging
 import threading
 import time
 
-from websockets import WebSocketClientProtocol
 from websockets.sync.client import ClientConnection
 from websockets.sync.client import connect
 
-from common.interfaces.price_service import PriceServiceInterface
-from common.interfaces.price_worker import PriceWorkerInterface
+from common.interfaces.repositories import PriceRepositoryInterface
+from common.interfaces.workers import PriceWorkerInterface
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
 
 logger = logging.getLogger(__name__)
 
 
-class WebSocketPriceWorker(PriceWorkerInterface, threading.Thread):
+class WebSocketPriceWorker(threading.Thread, PriceWorkerInterface):
     """Base class for WebSocket price workers."""
 
     exchange: PriceExchange
 
-    def __init__(self, ws_url: str, price_service: PriceServiceInterface) -> None:
+    def __init__(self, ws_url: str, repository: PriceRepositoryInterface) -> None:
         """Initialize the WebSocket price worker."""
         super().__init__()
-        self.ws_url = ws_url
-        self.price_service = price_service
+        self._ws_url = ws_url
+        self._repository = repository
         self._message_price_received = "Received price: {ticker}"
         self._message_subscribed = "Subscribed to {exchange} WebSocket feed."
         self._message_worker_started = "Starting {exchange} worker."
@@ -35,7 +33,7 @@ class WebSocketPriceWorker(PriceWorkerInterface, threading.Thread):
 
     def fetch_prices(self) -> None:
         """Fetch prices from the WebSocket feed."""
-        with connect(self.ws_url) as websocket:
+        with connect(self._ws_url) as websocket:
             self.subscribe(websocket=websocket)
             logging.info(self._message_subscribed.format(exchange=self.exchange))
             while True:
@@ -45,7 +43,7 @@ class WebSocketPriceWorker(PriceWorkerInterface, threading.Thread):
                     continue
                 for ticker in tickers:
                     logger.info(self._message_price_received.format(ticker=ticker))
-                    self.price_service.store_price(ticker=ticker)
+                    self._repository.store_price(ticker=ticker)
 
     def parse_message(self, message: str) -> list[PriceTicker]:
         """Parse the message from the exchange. Return a list of PriceTicker objects."""

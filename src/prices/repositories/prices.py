@@ -4,14 +4,14 @@ import threading
 
 from django.core.cache import cache
 
-from common.interfaces.price_service import PriceServiceInterface
+from common.interfaces.repositories import PriceRepositoryInterface
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
 from src.prices.exceptions import PriceNotFoundError
 
 
-class PriceService(PriceServiceInterface):
-    """Service to store and retrieve prices."""
+class PriceRepository(PriceRepositoryInterface):
+    """Repository to store and retrieve prices."""
 
     _lock = threading.Lock()
 
