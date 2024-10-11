@@ -19,7 +19,7 @@ from django.http import JsonResponse
 from django.urls import path
 from ninja import NinjaAPI
 
-from src.prices.views import prices_router
+from src.prices.routers.prices import prices_router
 
 api = NinjaAPI(docs_url="/")
 api.add_router("/prices/", prices_router)

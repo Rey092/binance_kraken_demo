@@ -8,8 +8,9 @@ from typing import TYPE_CHECKING
 
 from websockets.sync.client import connect
 
-from common.interfaces.repositories import PriceRepositoryInterface
-from common.interfaces.workers import PriceWorkerInterface
+from common.interfaces.repositories import IFetchPricesRepository
+from common.interfaces.repositories import IStorePricesRepository
+from common.interfaces.workers import IPriceWorker
 from src.prices.enums import PriceExchange
 
 if TYPE_CHECKING:
@@ -18,12 +19,12 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class WebSocketPriceWorkerBase(threading.Thread, PriceWorkerInterface, ABC):
+class WebSocketPriceWorkerBase(threading.Thread, IPriceWorker, ABC):
     """Base class for WebSocket price workers."""
 
     exchange: PriceExchange
 
-    def __init__(self, ws_url: str, repository: PriceRepositoryInterface) -> None:
+    def __init__(self, ws_url: str, repository: IStorePricesRepository) -> None:
         """Initialize the WebSocket price worker."""
         super().__init__()
         self._ws_url = ws_url

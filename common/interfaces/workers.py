@@ -8,7 +8,7 @@ from websockets.sync.client import ClientConnection
 from src.prices.datastructures.price_ticker import PriceTicker
 
 
-class PriceWorkerInterface(Protocol):
+class IPriceWorker(Protocol):
     """Interface for fetching prices from different exchanges."""
 
     @abstractmethod
