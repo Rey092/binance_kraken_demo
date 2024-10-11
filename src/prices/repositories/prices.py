@@ -55,30 +55,29 @@ class PriceRepository(
 
     def get_all_prices(self, exchange: PriceExchange | None) -> list[PriceTicker]:
         """Retrieve all prices from the cache."""
-        with self._lock:
-            cache_keys = self._prepare_cache_keys_for_prices(exchange)
-            price_tickers: list[PriceTicker] = list(cache.get_many(cache_keys).values())
+        cache_keys = self._prepare_cache_keys_for_prices(exchange)
+        price_tickers: list[PriceTicker] = list(cache.get_many(cache_keys).values())
 
-            # if exchange is provided, return the list of prices
-            if exchange:
-                price_tickers.sort(key=lambda x: x.pair)
-                return price_tickers
+        # if exchange is provided, return the list of prices
+        if exchange:
+            price_tickers.sort(key=lambda x: x.pair)
+            return price_tickers
 
-            # Group by pair
-            grouped_data: dict[str, list[PriceTicker]] = {}
-            for ticker in price_tickers:
-                grouped_data.setdefault(ticker.pair, []).append(ticker)
+        # Group by pair
+        grouped_data: dict[str, list[PriceTicker]] = {}
+        for ticker in price_tickers:
+            grouped_data.setdefault(ticker.pair, []).append(ticker)
 
-            # Create aggregated data if exchange is not provided
-            aggregated_data = [
-                PriceTicker.aggregate(price_tickers=tickers)
-                for tickers in grouped_data.values()
-            ]
+        # Create aggregated data if exchange is not provided
+        aggregated_data = [
+            PriceTicker.aggregate(price_tickers=tickers)
+            for tickers in grouped_data.values()
+        ]
 
-            # Sort the aggregated data by pair
-            aggregated_data.sort(key=lambda x: x.pair)
+        # Sort the aggregated data by pair
+        aggregated_data.sort(key=lambda x: x.pair)
 
-            return aggregated_data
+        return aggregated_data
 
     def _prepare_cache_keys_for_prices(
         self,
