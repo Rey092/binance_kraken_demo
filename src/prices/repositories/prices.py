@@ -21,9 +21,6 @@ class PriceRepository(
 
     def __init__(self):
         """Initialize the price service."""
-        self._exception_invalid_exchange = (
-            "Invalid exchange: {ticker_exchange}. Expected: {service_exchange}"
-        )
         self._key_for_keys = "keys:{exchange}"
         self._key_for_ticker = "ticker:{exchange}_{pair}"
 
