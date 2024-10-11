@@ -47,7 +47,7 @@ class KrakenWorker(WebSocketPriceWorkerBase):
         but it's possible to send subscription requests in batches
         and subscribe to all symbols this way.
         """
-        symbols = self.get_all_symbols()
+        symbols = self._get_all_symbols()
         for i in range(0, len(symbols), self._kraken_subscribe_batch_size):
             websocket.send(
                 json.dumps(
@@ -63,7 +63,7 @@ class KrakenWorker(WebSocketPriceWorkerBase):
                 ),
             )
 
-    def get_all_symbols(self) -> list[str]:
+    def _get_all_symbols(self) -> list[str]:
         """Retrieve all Kraken trading pairs."""
         response = httpx.get(self._kraken_symbols_url)
         data = response.json()
