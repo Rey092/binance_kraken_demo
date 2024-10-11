@@ -1,3 +1,5 @@
+"""Interface for storing and retrieving prices from different exchanges."""
+
 from abc import ABC, abstractmethod
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
@@ -5,8 +7,6 @@ from src.prices.enums import PriceExchange
 
 class PriceServiceInterface(ABC):
     """Interface for storing and retrieving prices from different exchanges."""
-
-    exchange_name: PriceExchange
 
     @abstractmethod
     def store_price(self, ticker: PriceTicker):
