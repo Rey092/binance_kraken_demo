@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 from websockets.sync.client import connect
 
-from common.interfaces.repositories import IGetPricesRepository
 from common.interfaces.repositories import IStorePricesRepository
 from common.interfaces.workers import IPriceWorker
 from src.prices.enums import PriceExchange

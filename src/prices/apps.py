@@ -15,17 +15,17 @@ class PricesConfig(AppConfig):
 
     def ready(self):
         """Start the price workers."""
-        # initialize the price service
+        # initialize the price repository
         repository = PriceRepository()
 
-        # Binance Service and Worker
+        # Start the Binance price worker's thread
         binance_worker = BinanceWebSocketPriceWorker(
             ws_url="wss://stream.binance.com:9443/stream?streams=",
             repository=repository,
         )
         binance_worker.start()
 
-        # Kraken Service and Worker
+        # Start the Kraken price worker's thread
         kraken_worker = KrakenWorker(
             ws_url="wss://ws.kraken.com/v2",
             repository=repository,
