@@ -1,4 +1,4 @@
-"""Price service to store and retrieve prices."""
+"""Price repository to store and retrieve prices."""
 
 import threading
 
