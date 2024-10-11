@@ -1,13 +1,13 @@
 """Interface for repositories."""
 
-from abc import ABC
 from abc import abstractmethod
+from typing import Protocol
 
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
 
 
-class IGetPricesRepository(ABC):
+class IGetPricesRepository(Protocol):
     """Interface for retrieving prices from the cache."""
 
     @abstractmethod
@@ -26,7 +26,7 @@ class IGetPricesRepository(ABC):
         """Retrieve the price for a given pair in the specified exchange."""
 
 
-class IStorePricesRepository(ABC):
+class IStorePricesRepository(Protocol):
     """Interface for storing prices in the cache."""
 
     @abstractmethod
