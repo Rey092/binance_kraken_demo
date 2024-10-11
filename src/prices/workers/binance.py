@@ -1,4 +1,7 @@
+"""Binance WebSocket price worker."""
+
 import json
+
 from websockets.sync.client import ClientConnection
 
 from src.prices.datastructures.price_ticker import PriceTicker
@@ -9,11 +12,10 @@ from src.prices.workers import WebSocketPriceWorker
 class BinanceWebSocketPriceWorker(WebSocketPriceWorker):
     """Binance WebSocket price worker."""
 
-    exchange = PriceExchange.binance
+    exchange: PriceExchange = PriceExchange.binance
 
     def parse_message(self, message: str) -> list[PriceTicker]:
-        """
-        Parse Binance WebSocket message.
+        """Parse Binance WebSocket message.
 
         Extract to a PriceTicker list.
         """
@@ -34,17 +36,15 @@ class BinanceWebSocketPriceWorker(WebSocketPriceWorker):
                     exchange=self.exchange,
                     pair=pair,
                     buy_price=buy_price,
-                    sell_price=sell_price
-                )
+                    sell_price=sell_price,
+                ),
             )
 
         return prices
 
     def subscribe(self, websocket: ClientConnection):
         """Subscribe to the Binance WebSocket feed."""
-        subscribe_message = json.dumps({
-            "method": "SUBSCRIBE",
-            "params": ["!ticker@arr"],
-            "id": 1
-        })
+        subscribe_message = json.dumps(
+            {"method": "SUBSCRIBE", "params": ["!ticker@arr"], "id": 1},
+        )
         websocket.send(subscribe_message)

@@ -1,10 +1,10 @@
 """Enums for the prices' app."""
 
-from django.db import models
+from enum import StrEnum
 
 
-class PriceExchange(models.TextChoices):
+class PriceExchange(StrEnum):
     """Exchanges supported by the price service."""
 
-    binance = "binance", "Binance"
-    kraken = "kraken", "Kraken"
+    binance = "binance"
+    kraken = "kraken"

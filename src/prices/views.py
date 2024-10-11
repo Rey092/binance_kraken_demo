@@ -1,18 +1,18 @@
 """Views for the price app."""
 
-from ninja import Router, Query
+from ninja import Query
+from ninja import Router
 
 from src.prices.datastructures.price_ticker import PriceTicker
-from src.prices.dtos import PricesFiltersDTO, PriceTickerReadDTO
+from src.prices.dtos import PricesFiltersDTO
+from src.prices.dtos import PriceTickerReadDTO
 from src.prices.services.prices import PriceService
 
 prices_router = Router()
 
 
-@prices_router.get('/', response={200: list[PriceTickerReadDTO]}, tags=['prices'])
-def list_prices(
-    request, filters: Query[PricesFiltersDTO]
-) -> list[PriceTicker]:
+@prices_router.get("/", response={200: list[PriceTickerReadDTO]}, tags=["prices"])
+def list_prices(request, filters: Query[PricesFiltersDTO]) -> list[PriceTicker]:
     """List prices from the exchanges."""
     price_service = PriceService()
 

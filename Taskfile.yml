@@ -22,3 +22,8 @@ tasks:
     desc: "Run Django app with Gunicorn"
     cmds:
       - gunicorn {{.GUNICORN_PARAMS}}
+
+  lint:
+    desc: "Run linting"
+    cmds:
+      - pre-commit run --all-files

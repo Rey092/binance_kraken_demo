@@ -1,3 +1,5 @@
+"""Price ticker dataclass."""
+
 from dataclasses import dataclass
 
 from src.prices.enums import PriceExchange
@@ -13,7 +15,10 @@ class PriceTicker:
     sell_price: float
 
     def __str__(self):
-        return f"Exchange: {self.exchange}, Pair: {self.pair}, Avg Price: {self.avg_price}"
+        """String representation of the price ticker."""
+        return (
+            f"Exchange: {self.exchange}, Pair: {self.pair}, Avg Price: {self.avg_price}"
+        )
 
     @property
     def avg_price(self):
@@ -30,12 +35,16 @@ class PriceTicker:
     def aggregate(cls, price_tickers: list["PriceTicker"]) -> "PriceTicker":
         """Aggregate multiple price tickers into a single one."""
         if not price_tickers:
-            raise ValueError("No price tickers to aggregate.")
-        if len(set(ticker.pair for ticker in price_tickers)) > 1:
-            raise ValueError("All tickers should have the same pair.")
+            no_price_tickers = "No price tickers to aggregate."
+            raise ValueError(no_price_tickers)
+        if len({ticker.pair for ticker in price_tickers}) > 1:
+            all_tickers_same_pair = "All tickers should have the same pair."
+            raise ValueError(all_tickers_same_pair)
         return cls(
             exchange=None,
             pair=price_tickers[0].pair,
-            buy_price=sum(ticker.buy_price for ticker in price_tickers) / len(price_tickers),
-            sell_price=sum(ticker.sell_price for ticker in price_tickers) / len(price_tickers)
+            buy_price=sum(ticker.buy_price for ticker in price_tickers)
+            / len(price_tickers),
+            sell_price=sum(ticker.sell_price for ticker in price_tickers)
+            / len(price_tickers),
         )

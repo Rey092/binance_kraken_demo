@@ -1,6 +1,7 @@
 """This module defines the interface for price workers."""
 
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
 
 
 class PriceWorkerInterface(ABC):
@@ -9,4 +10,3 @@ class PriceWorkerInterface(ABC):
     @abstractmethod
     def run(self):
         """Run the worker to fetch prices from the exchange."""
-        pass

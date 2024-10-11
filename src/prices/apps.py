@@ -1,6 +1,4 @@
 """Prices app configuration."""
-import threading
-from time import sleep
 
 from django.apps import AppConfig
 
@@ -22,14 +20,14 @@ class PricesConfig(AppConfig):
 
         # Binance Service and Worker
         binance_worker = BinanceWebSocketPriceWorker(
-            ws_url='wss://stream.binance.com:9443/stream?streams=',
-            price_service=price_service
+            ws_url="wss://stream.binance.com:9443/stream?streams=",
+            price_service=price_service,
         )
         binance_worker.start()
 
         # Kraken Service and Worker
         kraken_worker = KrakenWorker(
-            ws_url='wss://ws.kraken.com/v2',
-            price_service=price_service
+            ws_url="wss://ws.kraken.com/v2",
+            price_service=price_service,
         )
         kraken_worker.start()

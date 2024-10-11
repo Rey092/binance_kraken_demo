@@ -1,10 +1,13 @@
 """Price service to store and retrieve prices."""
 
 import threading
+
 from django.core.cache import cache
+
 from common.interfaces.price_service import PriceServiceInterface
 from src.prices.datastructures.price_ticker import PriceTicker
 from src.prices.enums import PriceExchange
+from src.prices.exceptions import PriceNotFoundError
 
 
 class PriceService(PriceServiceInterface):
@@ -13,16 +16,19 @@ class PriceService(PriceServiceInterface):
     _lock = threading.Lock()
 
     def __init__(self):
+        """Initialize the price service."""
         self._exception_invalid_exchange = (
-            "Invalid exchange: {ticker_exchange}. "
-            "Expected: {service_exchange}"
+            "Invalid exchange: {ticker_exchange}. Expected: {service_exchange}"
         )
         self._key_for_keys = "keys:{exchange}"
         self._key_for_ticker = "ticker:{exchange}_{pair}"
 
     def store_price(self, ticker: PriceTicker):
         """Store the price in the cache."""
-        cache_key = self._key_for_ticker.format(exchange=ticker.exchange, pair=ticker.pair)
+        cache_key = self._key_for_ticker.format(
+            exchange=ticker.exchange,
+            pair=ticker.pair,
+        )
 
         with self._lock:
             # Store the price in the cache
@@ -37,7 +43,11 @@ class PriceService(PriceServiceInterface):
             cache_keys.add(cache_key)
 
             # Pipeline to avoid race conditions (if using Redis)
-            cache.set(self._key_for_keys.format(exchange=ticker.exchange), cache_keys, timeout=None)
+            cache.set(
+                self._key_for_keys.format(exchange=ticker.exchange),
+                cache_keys,
+                timeout=None,
+            )
 
     def get_all_prices(self, exchange: PriceExchange | None) -> list[PriceTicker]:
         """Retrieve all prices from the cache."""
@@ -51,7 +61,7 @@ class PriceService(PriceServiceInterface):
                 return price_tickers
 
             # Group by pair
-            grouped_data = {}
+            grouped_data: dict[str, list[PriceTicker]] = {}
             for ticker in price_tickers:
                 grouped_data.setdefault(ticker.pair, []).append(ticker)
 
@@ -66,34 +76,54 @@ class PriceService(PriceServiceInterface):
 
             return aggregated_data
 
-    def _prepare_cache_keys_for_prices(self, exchange: PriceExchange | None) -> set[str]:
+    def _prepare_cache_keys_for_prices(
+        self,
+        exchange: PriceExchange | None,
+    ) -> set[str]:
         """Prepare the cache keys for the prices."""
         if exchange:
-            cache_keys: set[str] = cache.get(self._key_for_keys.format(exchange=exchange), set())
+            cache_keys: set[str] = cache.get(
+                self._key_for_keys.format(exchange=exchange),
+                set(),
+            )
         else:
             exchange_names = PriceExchange.__members__.keys()
             cache_keys_map: dict[str, set[str]] = cache.get_many(
-                [self._key_for_keys.format(exchange=exchange.lower()) for exchange in exchange_names]
+                [
+                    self._key_for_keys.format(exchange=exchange.lower())
+                    for exchange in exchange_names
+                ],
             )
             cache_keys = {key for keys in cache_keys_map.values() for key in keys}
         return cache_keys
 
-    def get_price(self, pair: str, exchange: PriceExchange | None = None) -> PriceTicker:
+    def get_price(
+        self,
+        pair: str,
+        exchange: PriceExchange | None = None,
+    ) -> PriceTicker:
         """Retrieve the price for a given pair."""
         if exchange:
-            ticker = cache.get(self._key_for_ticker.format(exchange=exchange, pair=pair))
+            ticker = cache.get(
+                self._key_for_ticker.format(exchange=exchange, pair=pair),
+            )
         else:
             exchanges_names = PriceExchange.__members__.keys()
-            tickers: list[PriceTicker] = list(cache.get_many(
-                [self._key_for_ticker.format(exchange=exchange, pair=pair) for exchange in exchanges_names]
-            ).values())
+            tickers: list[PriceTicker] = list(
+                cache.get_many(
+                    [
+                        self._key_for_ticker.format(exchange=exchange, pair=pair)
+                        for exchange in exchanges_names
+                    ],
+                ).values(),
+            )
 
             if not tickers:
-                raise Exception("Price not found.")
+                raise PriceNotFoundError
 
             ticker = PriceTicker.aggregate(price_tickers=tickers)
 
         if not ticker:
-            raise Exception("Price not found.")
+            raise PriceNotFoundError
 
         return ticker
