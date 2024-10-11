@@ -1,8 +1,24 @@
 version: '3'
 
 
+vars:
+  GUNICORN_PARAMS: |
+    config.wsgi \
+    --bind 0.0.0.0:8000 \
+    --workers 1 \
+    --access-logfile '-' \
+    --error-log '-' \
+    --log-level 'info' \
+    --forwarded-allow-ips '*' \
+    --access-logformat '%({x-forwarded-for}i)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+
 tasks:
   run:
     desc: "Run Django app in development mode"
     cmds:
       - python manage.py runserver --noreload
+
+  run-docker:
+    desc: "Run Django app with Gunicorn"
+    cmds:
+      - gunicorn {{.GUNICORN_PARAMS}}

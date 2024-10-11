@@ -4,14 +4,14 @@ import json
 import httpx
 import websockets
 from src.prices.datastructures.price_ticker import PriceTicker
-from src.prices.enums import PriceExchanges
+from src.prices.enums import PriceExchange
 from src.prices.workers import WebSocketPriceWorker
 
 
 class KrakenWorker(WebSocketPriceWorker):
     """Kraken WebSocket price worker."""
 
-    exchange_name = PriceExchanges.kraken
+    exchange = PriceExchange.kraken
     _kraken_symbols_url = "https://api.kraken.com/0/public/AssetPairs"
     _kraken_subscribe_batch_size = 500
 
@@ -28,10 +28,16 @@ class KrakenWorker(WebSocketPriceWorker):
         buy_price = float(data.get("high"))
         sell_price = float(data.get("low"))
 
-        return [PriceTicker(exchange=self.exchange_name, pair=pair, buy_price=buy_price, sell_price=sell_price)]
+        return [PriceTicker(exchange=self.exchange, pair=pair, buy_price=buy_price, sell_price=sell_price)]
 
     def subscribe(self, websocket: websockets.WebSocketClientProtocol):
-        """Subscribe to the Kraken WebSocket feed."""
+        """
+        Subscribe to the Kraken WebSocket feed.
+
+        Kraken has a symbols' limit for subscription,
+        but it's possible to send subscription requests in batches
+        and subscribe to all symbols this way.
+        """
         symbols = self.get_all_symbols()
         for i in range(0, len(symbols), self._kraken_subscribe_batch_size):
             websocket.send(

@@ -3,13 +3,13 @@ from typing import Self
 
 from ninja import Schema, Field
 
-from src.prices.enums import PriceExchanges
+from src.prices.enums import PriceExchange
 
 
 class PricesFiltersDTO(Schema):
     """Prices filters DTO."""
 
-    exchange: PriceExchanges | None = Field(
+    exchange: PriceExchange | None = Field(
         default=None, description="Exchange name."
     )
     pair: str | None = Field(
@@ -17,20 +17,15 @@ class PricesFiltersDTO(Schema):
     )
 
 
-class PriceTickerReadBaseDTO(Schema):
-    """Price ticker read base DTO."""
-
-    pair: str
-    avg_price: float
-
-
-class ExchangePriceTickerReadDTO(PriceTickerReadBaseDTO):
-    """Exchange price ticker read DTO."""
-
-    exchange: PriceExchanges
-
-
-class PriceTickerReadDTO(PriceTickerReadBaseDTO):
+class PriceTickerReadDTO(Schema):
     """Price ticker read DTO."""
 
-    exchange_data: list[ExchangePriceTickerReadDTO] = Field(default_factory=list)
+    exchange: PriceExchange | None = Field(
+        default=None, description="Exchange name. If None, it's an aggregated price from multiple exchanges."
+    )
+    pair: str = Field(
+        description="Trading pair. Example: ETHYL"
+    )
+    avg_price: float = Field(
+        description="Average price of the pair. Calculated as (buy_price + sell_price) / 2."
+    )

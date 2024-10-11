@@ -2,14 +2,14 @@ import json
 from websockets.sync.client import ClientConnection
 
 from src.prices.datastructures.price_ticker import PriceTicker
-from src.prices.enums import PriceExchanges
+from src.prices.enums import PriceExchange
 from src.prices.workers import WebSocketPriceWorker
 
 
 class BinanceWebSocketPriceWorker(WebSocketPriceWorker):
     """Binance WebSocket price worker."""
 
-    exchange_name = PriceExchanges.binance
+    exchange = PriceExchange.binance
 
     def parse_message(self, message: str) -> list[PriceTicker]:
         """
@@ -31,7 +31,7 @@ class BinanceWebSocketPriceWorker(WebSocketPriceWorker):
             sell_price = float(item.get("a"))  # Best ask price
             prices.append(
                 PriceTicker(
-                    exchange=self.exchange_name,
+                    exchange=self.exchange,
                     pair=pair,
                     buy_price=buy_price,
                     sell_price=sell_price

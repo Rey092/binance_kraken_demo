@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class PriceExchanges(models.TextChoices):
+class PriceExchange(models.TextChoices):
     """Exchanges supported by the price service."""
 
     binance = "binance", "Binance"

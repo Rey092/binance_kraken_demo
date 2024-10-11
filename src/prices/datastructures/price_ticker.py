@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
-from src.prices.enums import PriceExchanges
+from src.prices.enums import PriceExchange
 
 
 @dataclass
 class PriceTicker:
     """Price ticker dataclass."""
 
-    exchange: PriceExchanges
+    exchange: PriceExchange | None
     pair: str
     buy_price: float
     sell_price: float
@@ -25,3 +25,17 @@ class PriceTicker:
         self.pair = self.pair.replace("/", "").replace(":", "").upper()
         self.buy_price = round(self.buy_price, 7)
         self.sell_price = round(self.sell_price, 7)
+
+    @classmethod
+    def aggregate(cls, price_tickers: list["PriceTicker"]) -> "PriceTicker":
+        """Aggregate multiple price tickers into a single one."""
+        if not price_tickers:
+            raise ValueError("No price tickers to aggregate.")
+        if len(set(ticker.pair for ticker in price_tickers)) > 1:
+            raise ValueError("All tickers should have the same pair.")
+        return cls(
+            exchange=None,
+            pair=price_tickers[0].pair,
+            buy_price=sum(ticker.buy_price for ticker in price_tickers) / len(price_tickers),
+            sell_price=sum(ticker.sell_price for ticker in price_tickers) / len(price_tickers)
+        )

@@ -3,17 +3,16 @@
 from ninja import Router, Query
 
 from src.prices.datastructures.price_ticker import PriceTicker
-from src.prices.datastructures.price_ticker_aggregated import AggregatedPriceTicker
 from src.prices.dtos import PricesFiltersDTO, PriceTickerReadDTO
 from src.prices.services.prices import PriceService
 
 prices_router = Router()
 
 
-@prices_router.get('/', response={200: list[PriceTickerReadDTO]})
+@prices_router.get('/', response={200: list[PriceTickerReadDTO]}, tags=['prices'])
 def list_prices(
     request, filters: Query[PricesFiltersDTO]
-) -> list[PriceTicker | AggregatedPriceTicker]:
+) -> list[PriceTicker]:
     """List prices from the exchanges."""
     price_service = PriceService()
 

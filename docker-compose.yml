@@ -1,0 +1,11 @@
+
+
+services:
+  api: &api
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: demo_api
+    restart: always
+    environment:
+      - CONTAINER_NAME=test_api
