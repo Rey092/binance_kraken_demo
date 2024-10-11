@@ -26,3 +26,5 @@ class PriceTickerReadDTO(Schema):
         description="Average price of the pair. "
         "Calculated as (buy_price + sell_price) / 2.",
     )
+    buy_price: float = Field(description="Best bid price.")
+    sell_price: float = Field(description="Best ask price.")
