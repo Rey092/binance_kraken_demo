@@ -38,15 +38,15 @@ class PriceRepository(
             # Store the price in the cache
             cache.set(cache_key, ticker, timeout=None)
 
-            # Get the current set of cache keys atomically
+            # Get the current set of cache keys
             cache_keys = cache.get(self._key_for_keys.format(exchange=ticker.exchange))
             if cache_keys is None:
                 cache_keys = set()
 
-            # Add the new cache key and update the cache atomically
+            # Add the new cache key to the set of cache keys
             cache_keys.add(cache_key)
 
-            # Pipeline to avoid race conditions (if using Redis)
+            # Store the updated set of cache keys
             cache.set(
                 self._key_for_keys.format(exchange=ticker.exchange),
                 cache_keys,
