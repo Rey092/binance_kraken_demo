@@ -32,19 +32,17 @@ class PriceTicker:
         self.sell_price = round(self.sell_price, 7)
 
     @classmethod
-    def aggregate(cls, price_tickers: list["PriceTicker"]) -> "PriceTicker":
+    def aggregate(cls, tickers: list["PriceTicker"]) -> "PriceTicker":
         """Aggregate multiple price tickers into a single one."""
-        if not price_tickers:
+        if not tickers:
             no_price_tickers = "No price tickers to aggregate."
             raise ValueError(no_price_tickers)
-        if len({ticker.pair for ticker in price_tickers}) > 1:
+        if len({ticker.pair for ticker in tickers}) > 1:
             all_tickers_same_pair = "All tickers should have the same pair."
             raise ValueError(all_tickers_same_pair)
         return cls(
             exchange=None,
-            pair=price_tickers[0].pair,
-            buy_price=sum(ticker.buy_price for ticker in price_tickers)
-            / len(price_tickers),
-            sell_price=sum(ticker.sell_price for ticker in price_tickers)
-            / len(price_tickers),
+            pair=tickers[0].pair,
+            buy_price=sum(ticker.buy_price for ticker in tickers) / len(tickers),
+            sell_price=sum(ticker.sell_price for ticker in tickers) / len(tickers),
         )

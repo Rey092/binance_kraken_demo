@@ -67,8 +67,7 @@ class PriceRepository(
 
         # Create aggregated data if exchange is not provided
         aggregated_data = [
-            PriceTicker.aggregate(price_tickers=tickers)
-            for tickers in grouped_data.values()
+            PriceTicker.aggregate(tickers=tickers) for tickers in grouped_data.values()
         ]
 
         # Sort the aggregated data by pair
@@ -121,7 +120,7 @@ class PriceRepository(
             if not tickers:
                 raise PriceNotFoundError
 
-            ticker = PriceTicker.aggregate(price_tickers=tickers)
+            ticker = PriceTicker.aggregate(tickers=tickers)
 
         if not ticker:
             raise PriceNotFoundError
