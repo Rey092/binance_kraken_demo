@@ -11,7 +11,7 @@ from src.prices.enums import PriceExchange
 from src.prices.workers import WebSocketPriceWorkerBase
 
 
-class KrakenWorker(WebSocketPriceWorkerBase):
+class KrakenWebSocketPriceWorker(WebSocketPriceWorkerBase):
     """Kraken WebSocket price worker."""
 
     exchange: PriceExchange = PriceExchange.kraken

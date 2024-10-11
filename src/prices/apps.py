@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 from src.prices.repositories.prices import PriceRepository
 from src.prices.workers.binance import BinanceWebSocketPriceWorker
-from src.prices.workers.kraken import KrakenWorker
+from src.prices.workers.kraken import KrakenWebSocketPriceWorker
 
 
 class PricesConfig(AppConfig):
@@ -26,7 +26,7 @@ class PricesConfig(AppConfig):
         binance_worker.start()
 
         # Start the Kraken price worker's thread
-        kraken_worker = KrakenWorker(
+        kraken_worker = KrakenWebSocketPriceWorker(
             ws_url="wss://ws.kraken.com/v2",
             repository=repository,
         )
