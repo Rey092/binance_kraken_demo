@@ -4,6 +4,7 @@ Binance + Kraken prices demo
 
 ## Prerequisites
 
+
 - Docker
 - Docker Compose
 - Taskfile
